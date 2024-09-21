@@ -8,7 +8,7 @@ import {
 import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction } from "@remix-run/node";
 
-import styles from "./tailwind.css";
+import styles from "./tailwind.css"
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles},
@@ -34,8 +34,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
-        {children}
+      <body className="bg-gray-100 text-gray-800">
+        <div className="container mx-auto p-6">
+          <h1 className="text-2xl font-bold mb-4">StarWars Characters</h1>
+
+          <div className="overflow-x-auto">
+            {children}
+          </div>
+        </div>
         <ScrollRestoration />
         <Scripts />
       </body>
