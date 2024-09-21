@@ -26,14 +26,12 @@ export interface SWAPIResponse<T> {
     results: T[];
 };
 
-export async function fetchPeople(): Promise<SWAPIResponse<Person>> {
-    const response = await fetch("https://swapi.dev/api/people");
+export async function fetchPeople(page: number = 1): Promise<SWAPIResponse<Person>> {
+    const response = await fetch(`https://swapi.dev/api/people?page=${page}`);
     
     if (!response.ok) {
       throw new Error("Failed to fetch characters");
     }
-  
-    // Use TypeScript to type the response as SWAPIResponse<Person>
     const people: SWAPIResponse<Person> = await response.json();
     return people;
   }
