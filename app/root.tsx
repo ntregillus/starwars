@@ -5,11 +5,14 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import { cssBundleHref } from "@remix-run/css-bundle";
 import type { LinksFunction } from "@remix-run/node";
 
-import "./tailwind.css";
+import styles from "./tailwind.css";
 
 export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: styles},
+  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
