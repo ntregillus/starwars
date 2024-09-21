@@ -38,6 +38,9 @@ export default function Index() {
     }
     return `?page=${page}&sort=${key}&order=${newOrderBy}`;
   };
+  const generateCharacterLink = (url: string) => {
+    return url.replace("https://swapi.dev/api/people/", "/character/"); 
+  };
 
   const sortedPeople: Array<any> = [...people.results].sort((a:any, b:any)=> {
     const aValue = a[sortKey];
@@ -78,7 +81,7 @@ export default function Index() {
               return index < (page*PAGE_SIZE) && index >= ((page-1)*PAGE_SIZE);
             }).map((person: any) => (
               <TableRow key={person.name}>
-                <TableCell>{person.name}</TableCell>
+                <TableCell><Link to={generateCharacterLink(person.url)}>{person.name}</Link></TableCell>
                 <TableCell>{person.height}</TableCell>
                 <TableCell>{person.mass}</TableCell>
                 <TableCell>{person.birth_year}</TableCell>
