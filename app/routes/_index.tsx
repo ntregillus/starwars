@@ -1,11 +1,12 @@
 import type { MetaFunction } from "@remix-run/node";
-import type {LoaderFunctionArgs} from "@remix-run/node";
 import {json} from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useSearchParams } from "@remix-run/react";
 import { fetchPeople } from "~/lib/swapi";
 import { Link } from "@remix-run/react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
-
+import { Button } from "~/components/ui/button";
+import { ArrowUpDown } from "lucide-react";
+const PAGE_SIZE = 10;
 export const meta: MetaFunction = () => {
   return [
     { title: "StarWars Characters" },
@@ -16,16 +17,38 @@ export const meta: MetaFunction = () => {
 export const loader = async ({ request }: { request: Request }) => {
   const url = new URL(request.url);
   const page = Number(url.searchParams.get("page")||1);
-  const people = await fetchPeople(page);
+  const people = await fetchPeople(); //we do NOT pass page number so we load ALL pages, and allow sorting
   return json({people, page});
 };
 
 export default function Index() {
   const {people, page} = useLoaderData<typeof loader>();
-
+  const [searchParams, setSearchParams] = useSearchParams();
   if(!people || !people.results) {
     return (<p>Failure to Load from swapi</p>);
   }
+  //handling sorting
+  const sortKey = searchParams.get('sort') || 'name';
+  const sortOrder = searchParams.get('order') || 'asc';
+  
+  const generateSortLink = (key: string) => {
+    let newOrderBy = "asc";
+    if(sortKey == key && sortOrder === "asc") {
+      newOrderBy = "desc";
+    }
+    return `?page=${page}&sort=${key}&order=${newOrderBy}`;
+  };
+
+  const sortedPeople: Array<any> = [...people.results].sort((a:any, b:any)=> {
+    const aValue = a[sortKey];
+    const bValue = b[sortKey];
+
+    if (sortOrder === 'asc') {
+      return aValue > bValue ? 1 : -1;
+    } else {
+      return aValue < bValue ? 1 : -1;
+    }
+  });
 
 
   return (
@@ -34,15 +57,26 @@ export default function Index() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Height</TableHead>
-              <TableHead>Mass</TableHead>
-              <TableHead>Birth Year</TableHead>
+              <TableHead>
+                <Link to={generateSortLink('name')} key="name">Name</Link>
+              </TableHead>
+              <TableHead>
+                <Link to={generateSortLink('height')}>Height</Link>
+              </TableHead>
+              <TableHead>
+                <Link to={generateSortLink("mass")}>Mass</Link>
+              </TableHead>
+              <TableHead>
+                <Link to={generateSortLink("birth_year")}>Birth Year</Link>
+              </TableHead>
               <TableHead>Gender</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {people.results.map((person: any) => (
+            {sortedPeople
+            .filter((person: any, index: number) => {
+              return index < (page*PAGE_SIZE) && index >= ((page-1)*PAGE_SIZE);
+            }).map((person: any) => (
               <TableRow key={person.name}>
                 <TableCell>{person.name}</TableCell>
                 <TableCell>{person.height}</TableCell>
@@ -56,9 +90,9 @@ export default function Index() {
       </div>
        {/* Pagination Controls */}
        <div className="mt-4 flex justify-between">
-        {people.previous ? (
+        {page > 1 ? (
           <Link
-            to={`?page=${page - 1}`}
+            to={`?page=${page - 1}&sort=${sortKey}&order=${sortOrder}`}
             className="px-4 py-2 bg-blue-500 text-white rounded"
           >
             Previous
@@ -66,9 +100,9 @@ export default function Index() {
         ) : (
           <span className="px-4 py-2 bg-gray-400 text-white rounded">Previous</span>
         )}
-        {people.next ? (
+        {people.count > page*PAGE_SIZE ? (
           <Link
-            to={`?page=${page + 1}`}
+            to={`?page=${page + 1}&sort=${sortKey}&order=${sortOrder}`}
             className="px-4 py-2 bg-blue-500 text-white rounded"
           >
             Next

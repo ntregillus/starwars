@@ -1,3 +1,4 @@
+import { createCookie } from "@remix-run/node";
 // Define the structure of a Person object returned by SWAPI
 export interface Person {
     name: string;
@@ -33,6 +34,10 @@ export async function fetchPeople(page: number = 1): Promise<SWAPIResponse<Perso
       throw new Error("Failed to fetch characters");
     }
     const people: SWAPIResponse<Person> = await response.json();
+    if(people.next) {
+        const allPeople: SWAPIResponse<Person> = await fetchPeople(page+1);
+        people.results = people.results.concat(allPeople.results);
+    }
     return people;
   }
 
