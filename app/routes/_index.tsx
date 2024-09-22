@@ -4,8 +4,6 @@ import { useLoaderData, useSearchParams } from "@remix-run/react";
 import { fetchPeople } from "~/lib/swapi";
 import { Link } from "@remix-run/react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
-import { Button } from "~/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
 const PAGE_SIZE = 10;
 export const meta: MetaFunction = () => {
   return [
@@ -23,7 +21,7 @@ export const loader = async ({ request }: { request: Request }) => {
 
 export default function Index() {
   const {people, page} = useLoaderData<typeof loader>();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   if(!people || !people.results) {
     return (<p>Failure to Load from swapi</p>);
   }
@@ -39,7 +37,7 @@ export default function Index() {
     return `?page=${page}&sort=${key}&order=${newOrderBy}`;
   };
   const generateCharacterLink = (url: string) => {
-    return url.replace("https://swapi.dev/api/people/", "/character/"); 
+    return url.replace("https://swapi.dev/api/people/", "/character/")+"films"; 
   };
 
   const sortedPeople: Array<any> = [...people.results].sort((a:any, b:any)=> {
