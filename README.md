@@ -1,12 +1,24 @@
-# Welcome to Remix!
+# Starwars Characters!
+This project utilizes the [SWAPI](https://swapi.dev/) to provide character details of the StarWars movides.
 
-- 📖 [Remix docs](https://remix.run/docs)
+## Prequisites
+* node version >= 20
+* git version >= 2
+
+## Setup
+run the following commands
+```sh
+git clone https://github.com/ntregillus/starwars.git
+cd starwars
+npm i
+
+```
 
 ## Development
 
 Run the dev server:
 
-```shellscript
+```sh
 npm run dev
 ```
 
@@ -28,8 +40,6 @@ Now you'll need to pick a host to deploy it to.
 
 ### DIY
 
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
-
 Make sure to deploy the output of `npm run build`
 
 - `build/server`
@@ -37,4 +47,11 @@ Make sure to deploy the output of `npm run build`
 
 ## Styling
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
+This project comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience, and leverages components from the [shadcn/ui](https://ui.shadcn.com/docs/) framework. current components installed are found in the /compnents/ui/ directory. current components used are:
+* button
+* card
+* input
+* label
+* seperator
+* table
+* tabs
