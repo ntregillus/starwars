@@ -76,6 +76,20 @@ export async function fetchPeople(page: number = 1): Promise<SWAPIResponse<Perso
     return people;
 };
 
+export async function fetchPeopleByName(searchText: string, page: number = 1): Promise<SWAPIResponse<Person>> {
+  const response = await fetch(`https://swapi.dev/api/people?search=${encodeURIComponent(searchText)}&page=${page}`);
+    
+  if (!response.ok) {
+    throw new Error("Failed to fetch characters");
+  }
+  const people: SWAPIResponse<Person> = await response.json();
+  if(people.next) {
+      const allPeople: SWAPIResponse<Person> = await fetchPeopleByName(searchText, page+1);
+      people.results = people.results.concat(allPeople.results);
+  }
+  return people;
+}
+
 export async function getPerson(id: number): Promise<Person> {
   const response = await fetch(`https://swapi.dev/api/people/${id}/`);
   if (!response.ok) throw new Response('Person not found', { status: 404 });
